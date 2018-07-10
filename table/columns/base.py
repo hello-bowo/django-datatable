@@ -31,7 +31,10 @@ class Column(object):
 
     def render(self, obj):
         text = Accessor(self.field).resolve(obj)
-        return escape(text)
+        if self.safe:
+            return text
+        else:
+            return escape(text)
 
 
 class BoundColumn(object):
