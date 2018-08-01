@@ -65,6 +65,12 @@ class FeedDataView(JSONResponseMixin, BaseListView):
             """
             queries = []
             fields = [col.field for col in self.columns if col.searchable]
+            full_name_fields = [f for f in fields if "full_name" in f]
+            for f in full_name_fields:
+                fields.remove(f)
+                fields.append(f.replace("full_name", "first_name"))
+                fields.append(f.replace("full_name", "first_name"))
+
             for field in fields:
                 key = "__".join(field.split(".") + ["icontains"])
                 value = filter_target
@@ -87,6 +93,8 @@ class FeedDataView(JSONResponseMixin, BaseListView):
                 if not key.startswith("iSortCol_"):
                     continue
                 field = self.columns[value].field.replace('.', '__')
+                if "full_name" in field:
+                    field = field.replace("full_name", "first_name")
                 dir = self.query_data["sSortDir_" + key.split("_")[1]]
                 if dir == "asc":
                     arguments.append(field)
